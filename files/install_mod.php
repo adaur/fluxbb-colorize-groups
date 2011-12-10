@@ -21,7 +21,7 @@ function install()
 	global $db, $db_type, $pun_config, $pun_user;
 
 	$db->add_field('groups', 'g_color', 'VARCHAR(15)', true);
-	
+
 	$result = $db->query('UPDATE '.$db->prefix.'groups SET g_color=\'#AA0000\' WHERE g_id='.PUN_ADMIN) or error('Unable to fetch group list', __FILE__, __LINE__, $db->error());
 	$result = $db->query('UPDATE '.$db->prefix.'groups SET g_color=\'#00AA00\' WHERE g_id='.PUN_MOD) or error('Unable to fetch group list', __FILE__, __LINE__, $db->error());
 
@@ -49,12 +49,12 @@ function install()
 			$db->query('UPDATE '.$db->prefix.'forums SET moderators='.$cur_moderators.' WHERE id='.$cur_forum['id']) or error('Unable to update forum', __FILE__, __LINE__, $db->error());
 		}
 	}
-	
+
 	$pun_user['g_color'] = '';
 	// Generate colorize groups cache
 	require_once PUN_ROOT.'include/colorize_groups.php';
 	generate_colorize_groups_cache();
-	
+
 	if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
 		require PUN_ROOT.'include/cache.php';
 
@@ -67,7 +67,7 @@ function restore()
 	global $db, $db_type, $pun_config;
 
 	$db->drop_field('groups', 'g_color');
-	
+
 	// Update moderator list
 	$result = $db->query('SELECT id, moderators FROM '.$db->prefix.'forums') or error('Unable to fetch forum list', __FILE__, __LINE__, $db->error());
 
@@ -82,7 +82,7 @@ function restore()
 			$db->query('UPDATE '.$db->prefix.'forums SET moderators='.$cur_moderators.' WHERE id='.$cur_forum['id']) or error('Unable to update forum', __FILE__, __LINE__, $db->error());
 		}
 	}
-	
+
 	// Delete colorize groups cache
 	@unlink(FORUM_CACHE_DIR.'cache_colorize_groups.php');
 }
@@ -194,3 +194,11 @@ else
 
 </body>
 </html>
+
+<?php
+
+// End the transaction
+$db->end_transaction();
+
+// Close the db connection (and free up any result data)
+$db->close();
