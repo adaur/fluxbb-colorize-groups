@@ -2,10 +2,10 @@
 ##
 ##        Mod title:  Colorize groups
 ##
-##      Mod version:  1.2.1
-##  Works on FluxBB:  1.4.7, 1.4.6
-##     Release date:  2011-09-29
-##      Review date:  2011-09-29
+##      Mod version:  1.2.2
+##  Works on FluxBB:  1.4.8, 1.4.7, 1.4.6
+##     Release date:  2012-01-21
+##      Review date:  2012-01-21
 ##           Author:  Daris (daris91@gmail.com)
 ##
 ##      Description:  Colorizes username based on his group
@@ -28,7 +28,7 @@
 ##       Affects DB:  Yes
 ##
 ##       DISCLAIMER:  Please note that "mods" are not officially supported by
-##                    FluxBB. Installation of this modification is done at 
+##                    FluxBB. Installation of this modification is done at
 ##                    your own risk. Backup your forum database and any and
 ##                    all applicable files before proceeding.
 ##
@@ -152,7 +152,7 @@ admin_groups.php
 #
 #---------[ 17. FIND ]-------------------------------------------------------
 #
-	
+
 		$db->query('INSERT INTO '.$db->prefix.'groups (g_title, g_user_title, g_moderator, g_mod_edit_users, g_mod_rename_users, g_mod_change_passwords, g_mod_ban_users, g_read_board, g_view_users, g_post_replies, g_post_topics, g_edit_posts, g_delete_posts, g_delete_topics, g_set_title, g_search, g_search_users, g_send_email, g_post_flood, g_search_flood, g_email_flood, g_report_flood) VALUES(\''.$db->escape($title).'\', '.$user_title.', '.$moderator.', '.$mod_edit_users.', '.$mod_rename_users.', '.$mod_change_passwords.', '.$mod_ban_users.', '.$read_board.', '.$view_users.', '.$post_replies.', '.$post_topics.', '.$edit_posts.', '.$delete_posts.', '.$delete_topics.', '.$set_title.', '.$search.', '.$search_users.', '.$send_email.', '.$post_flood.', '.$search_flood.', '.$email_flood.', '.$report_flood.')') or error('Unable to add group', __FILE__, __LINE__, $db->error());
 
 #
@@ -172,7 +172,7 @@ admin_groups.php
 #
 
 		$db->query('UPDATE '.$db->prefix.'groups SET g_title=\''.$db->escape($title).'\', g_user_title='.$user_title.', g_moderator='.$moderator.', g_mod_edit_users='.$mod_edit_users.', g_mod_rename_users='.$mod_rename_users.', g_mod_change_passwords='.$mod_change_passwords.', g_mod_ban_users='.$mod_ban_users.', g_read_board='.$read_board.', g_view_users='.$view_users.', g_post_replies='.$post_replies.', g_post_topics='.$post_topics.', g_edit_posts='.$edit_posts.', g_delete_posts='.$delete_posts.', g_delete_topics='.$delete_topics.', g_set_title='.$set_title.', g_search='.$search.', g_search_users='.$search_users.', g_send_email='.$send_email.', g_post_flood='.$post_flood.', g_search_flood='.$search_flood.', g_email_flood='.$email_flood.', g_report_flood='.$report_flood.', g_color=\''.$db->escape($group_color).'\' WHERE g_id='.intval($_POST['group_id'])) or error('Unable to update group', __FILE__, __LINE__, $db->error());
-		
+
 #
 #---------[ 21. FIND ]-------------------------------------------------------
 #
@@ -256,10 +256,10 @@ $result = $db->query('SELECT u.group_id, u.id AS uid, c.id AS cid, c.cat_name, f
 			$col_group = colorize_group($cur_forum['last_poster'], $cur_forum['group_id'], $cur_forum['uid']);
 		else // guest
 			$col_group = colorize_group($cur_forum['last_poster'], PUN_GUEST);
-	
+
 		$last_post = str_replace('<span class="byuser">'.$lang_common['by'].' '.pun_htmlspecialchars($cur_forum['last_poster']).'</span>', '<span class="byuser">'.$lang_common['by'].' '.$col_group.'</span>', $last_post);
 	}
-	
+
 	if ($cur_forum['moderators'] != '')
 	{
 		$mods_array = unserialize($cur_forum['moderators']);
@@ -269,7 +269,7 @@ $result = $db->query('SELECT u.group_id, u.id AS uid, c.id AS cid, c.cat_name, f
 			$moderator_groups = $mods_array['groups'];
 			unset($mods_array['groups']);
 		}
-		
+
 		if (count($mods_array) > 0)
 		{
 			$moderators = array();
@@ -344,11 +344,11 @@ $stats['newest_user'] = colorize_group($stats['last_user']['username'], $stats['
 			$cur_group = colorize_group($g_title, $g_id);
 			if ($pun_user['g_view_users'] == 1)
 				$cur_group = '<a href="userlist.php?show_group='.$g_id.'">'.$cur_group.'</a>';
-			
+
 			$groups[] = "\n\t\t\t\t".'<dd>'.$cur_group.'</dd>';
 		}
 	}
-	
+
 	if (count($groups) > 0)
 		echo "\t\t\t".'<dl id="onlinelist" class="clearb">'."\n\t\t\t\t".'<dt><strong>'.$lang_colorize_groups['Legend'].': </strong></dt>'.implode(', ', $groups)."\n\t\t\t".'</dl>'."\n";
 
@@ -393,14 +393,14 @@ viewforum.php
 			$col_group = colorize_group($cur_topic['poster'], PUN_GUEST);
 
 		$subject = str_replace('<span class="byuser">'.$lang_common['by'].' '.pun_htmlspecialchars($cur_topic['poster']).'</span>', '<span class="byuser">'.$lang_common['by'].' '.$col_group.'</span>', $subject);
-		
+
 		if ($cur_topic['last_post'] != '')
 		{
 			if (isset($cur_topic['group_id'])) // user
 				$col_group = colorize_group($cur_topic['last_poster'], $cur_topic['group_id'], $cur_topic['uid']);
 			else // guest
 				$col_group = colorize_group($cur_topic['last_poster'], PUN_GUEST);
-			
+
 			$last_post = str_replace('<span class="byuser">'.$lang_common['by'].' '.pun_htmlspecialchars($cur_topic['last_poster']).'</span>', '<span class="byuser">'.$lang_common['by'].' '.$col_group.'</span>', $last_post);
 		}
 
@@ -460,14 +460,14 @@ moderate.php
 			$col_group = colorize_group($cur_topic['poster'], PUN_GUEST);
 
 		$subject = str_replace('<span class="byuser">'.$lang_common['by'].' '.pun_htmlspecialchars($cur_topic['poster']).'</span>', '<span class="byuser">'.$lang_common['by'].' '.$col_group.'</span>', $subject);
-		
+
 		if ($cur_topic['last_post'] != '')
 		{
 			if (isset($cur_topic['group_id'])) // user
 				$col_group = colorize_group($cur_topic['last_poster'], $cur_topic['group_id'], $cur_topic['uid']);
 			else // guest
 				$col_group = colorize_group($cur_topic['last_poster'], PUN_GUEST);
-			
+
 			$last_post = str_replace('<span class="byuser">'.$lang_common['by'].' '.pun_htmlspecialchars($cur_topic['last_poster']).'</span>', '<span class="byuser">'.$lang_common['by'].' '.$col_group.'</span>', $last_post);
 		}
 
@@ -490,7 +490,7 @@ userlist.php
 #
 
 					<td class="tcl"><?php echo '<a href="profile.php?id='.$user_data['id'].'">'.colorize_group($user_data['username'], $user_data['g_id']).'</a>' ?></td>
-					
+
 #
 #---------[ 54. OPEN ]---------------------------------------------------------
 #
@@ -536,7 +536,7 @@ profile.php
 #---------[ 59. BEFORE, ADD ]-------------------------------------------------
 #
 	}
-	
+
 	// Else update moderator's group_id
 	else
 	{
@@ -560,7 +560,7 @@ profile.php
 	// Get the username of the user we are processing
 	$result = $db->query('SELECT username FROM '.$db->prefix.'users WHERE id='.$id) or error('Unable to fetch user info', __FILE__, __LINE__, $db->error());
 	$username = $db->result($result);
-	
+
 #
 #---------[ 58. REPLACE WITH ]---------------------------------------------
 #
@@ -648,7 +648,7 @@ post.php
 #
 
 							<dt><strong><?php echo colorize_group($cur_post['poster'], $cur_post['group_id']) ?></strong></dt>
-							
+
 #
 #---------[ 62. OPEN ]---------------------------------------------------------
 #
@@ -699,7 +699,7 @@ search.php
 					$col_group = colorize_group($cur_search['poster'], $cur_search['up_group_id'], $cur_search['up_id']);
 				else // guest
 					$col_group = colorize_group($cur_search['poster'], PUN_GUEST);
-				
+
 				$subject = str_replace('<span class="byuser">'.$lang_common['by'].' '.pun_htmlspecialchars($cur_search['poster']).'</span>', '<span class="byuser">'.$lang_common['by'].' '.$col_group.'</span>', $subject);
 
 #
