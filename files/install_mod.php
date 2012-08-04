@@ -3,13 +3,13 @@
 
 // Some info about your mod.
 $mod_title      = 'Colorize groups';
-$mod_version    = '1.2.2';
-$release_date   = '2012-01-21';
+$mod_version    = '1.2.3';
+$release_date   = '2012-08-04';
 $author         = 'Daris';
 $author_email   = 'daris91@gmail.com';
 
 // Versions of FluxBB this mod was created for. A warning will be displayed, if versions do not match
-$fluxbb_versions= array('1.4.8', '1.4.7', '1.4.6');
+$fluxbb_versions= array('1.5.0');
 
 // Set this to false if you haven't implemented the restore function (see below)
 $mod_restore	= true;
