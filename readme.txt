@@ -2,10 +2,9 @@
 ##
 ##        Mod title:  Colorize groups
 ##
-##      Mod version:  1.2.3
-##  Works on FluxBB:  1.5.0
-##     Release date:  2012-08-04
-##      Review date:  2012-08-04
+##      Mod version:  1.2.4
+##  Works on FluxBB:  1.5.1, 1.5.2, 1.5.3, 1.5.4
+##     Release date:  2013-08-14
 ##           Author:  Daris (daris91@gmail.com)
 ##
 ##      Description:  Colorizes username based on his group
@@ -95,86 +94,98 @@ if (isset($page_head))
 $page_head['colorize_groups'] = '<style type="text/css">'.$GLOBALS['pun_colorize_groups']['style'].'</style>'; // need $GLOBALS for message function
 
 #
-#---------[ 10. OPEN ]--------------------------------------------------------------------------
+#---------[ 10. FIND ]---------------------------------------------
+#
+
+$page_statusinfo[] = '<li><span>'.$lang_common['Logged in as'].' <strong>'.pun_htmlspecialchars($pun_user['username']).'</strong></span></li>';
+
+#
+#---------[ 11. REPLACE WITH ]-------------------------------------------------
+#
+
+$page_statusinfo[] = '<li><span>'.$lang_common['Logged in as'].' <strong>'.colorize_group($pun_user['username'], $pun_user['g_id'], $pun_user['id']).'</strong></span></li>';
+
+#
+#---------[ 12. OPEN ]--------------------------------------------------------------------------
 #
 
 admin_groups.php
 
 #
-#---------[ 11. FIND (line: 10) ]---------------------------------------------
+#---------[ 13. FIND (line: 81) ]---------------------------------------------
 #
 
 								<tr>
 									<th scope="row"><?php echo $lang_admin_groups['User title label'] ?></th>
 									<td>
 										<input type="text" name="user_title" size="25" maxlength="50" value="<?php echo pun_htmlspecialchars($group['g_user_title']) ?>" tabindex="2" />
-										<span><?php printf($lang_admin_groups['User title help'], $lang_common['Member']) ?></span>
+										<span><?php printf($lang_admin_groups['User title help'], ($group['g_id'] != PUN_GUEST ? $lang_common['Member'] : $lang_common['Guest'])) ?></span>
 									</td>
 								</tr>
 
 #
-#---------[ 12. AFTER, ADD ]-------------------------------------------------
+#---------[ 14. AFTER, ADD ]-------------------------------------------------
 #
 
 								<tr>
 									<th scope="row"><?php echo $lang_colorize_groups['Group color'] ?></th>
 									<td>
-										<input type="text" name="group_color" size="7" maxlength="7" value="<?php echo $group['g_color'] ?>" tabindex="25" />
+										<input type="text" name="group_color" size="7" maxlength="7" value="<?php echo pun_htmlspecialchars($group['g_color']) ?>" tabindex="25" />
 										<span><?php echo $lang_colorize_groups['Group color help'] ?></span>
 									</td>
 								</tr>
 
-#---------[ 13. FIND ]-------------------------------------------------------
+#---------[ 15. FIND ]-------------------------------------------------------
 #
 
 	$user_title = pun_trim($_POST['user_title']);
 
 #
-#---------[ 14. AFTER, ADD ]-----------------------------------------------------------------
+#---------[ 16. AFTER, ADD ]-----------------------------------------------------------------
 #
 
 	$group_color = pun_trim($_POST['group_color']);
 
 #
-#---------[ 15. FIND ]-------------------------------------------------------
+#---------[ 17. FIND ]-------------------------------------------------------
 #
 
 	if ($title == '')
 		message($lang_admin_groups['Must enter title message']);
 
 #
-#---------[ 16. AFTER, ADD ]-----------------------------------------------------------------
+#---------[ 18. AFTER, ADD ]-----------------------------------------------------------------
 #
 
 	if (!empty($group_color) && !preg_match('/^#([a-fA-F0-9]){6}$/', $group_color))
 		message($lang_colorize_groups['Inalid color message']);
 
 #
-#---------[ 17. FIND ]-------------------------------------------------------
+#---------[ 19. FIND ]-------------------------------------------------------
 #
 
 		$db->query('INSERT INTO '.$db->prefix.'groups (g_title, g_user_title, g_promote_min_posts, g_promote_next_group, g_moderator, g_mod_edit_users, g_mod_rename_users, g_mod_change_passwords, g_mod_ban_users, g_read_board, g_view_users, g_post_replies, g_post_topics, g_edit_posts, g_delete_posts, g_delete_topics, g_post_links, g_set_title, g_search, g_search_users, g_send_email, g_post_flood, g_search_flood, g_email_flood, g_report_flood) VALUES(\''.$db->escape($title).'\', '.$user_title.', '.$promote_min_posts.', '.$promote_next_group.', '.$moderator.', '.$mod_edit_users.', '.$mod_rename_users.', '.$mod_change_passwords.', '.$mod_ban_users.', '.$read_board.', '.$view_users.', '.$post_replies.', '.$post_topics.', '.$edit_posts.', '.$delete_posts.', '.$delete_topics.', '.$post_links.', '.$set_title.', '.$search.', '.$search_users.', '.$send_email.', '.$post_flood.', '.$search_flood.', '.$email_flood.', '.$report_flood.')') or error('Unable to add group', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 18. REPLACE WITH ]-----------------------------------------------------------------
+#---------[ 20. REPLACE WITH ]-----------------------------------------------------------------
 #
 
 		$db->query('INSERT INTO '.$db->prefix.'groups (g_title, g_user_title, g_promote_min_posts, g_promote_next_group, g_moderator, g_mod_edit_users, g_mod_rename_users, g_mod_change_passwords, g_mod_ban_users, g_read_board, g_view_users, g_post_replies, g_post_topics, g_edit_posts, g_delete_posts, g_delete_topics, g_post_links, g_set_title, g_search, g_search_users, g_send_email, g_post_flood, g_search_flood, g_email_flood, g_report_flood, g_color) VALUES(\''.$db->escape($title).'\', '.$user_title.', '.$promote_min_posts.', '.$promote_next_group.', '.$moderator.', '.$mod_edit_users.', '.$mod_rename_users.', '.$mod_change_passwords.', '.$mod_ban_users.', '.$read_board.', '.$view_users.', '.$post_replies.', '.$post_topics.', '.$edit_posts.', '.$delete_posts.', '.$delete_topics.', '.$post_links.', '.$set_title.', '.$search.', '.$search_users.', '.$send_email.', '.$post_flood.', '.$search_flood.', '.$email_flood.', '.$report_flood.', \''.$db->escape($group_color).'\')') or error('Unable to add group', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 19. FIND ]-------------------------------------------------------
+#---------[ 21. FIND ]-------------------------------------------------------
 #
 
 		$db->query('UPDATE '.$db->prefix.'groups SET g_title=\''.$db->escape($title).'\', g_user_title='.$user_title.', g_promote_min_posts='.$promote_min_posts.', g_promote_next_group='.$promote_next_group.', g_moderator='.$moderator.', g_mod_edit_users='.$mod_edit_users.', g_mod_rename_users='.$mod_rename_users.', g_mod_change_passwords='.$mod_change_passwords.', g_mod_ban_users='.$mod_ban_users.', g_read_board='.$read_board.', g_view_users='.$view_users.', g_post_replies='.$post_replies.', g_post_topics='.$post_topics.', g_edit_posts='.$edit_posts.', g_delete_posts='.$delete_posts.', g_delete_topics='.$delete_topics.', g_post_links='.$post_links.', g_set_title='.$set_title.', g_search='.$search.', g_search_users='.$search_users.', g_send_email='.$send_email.', g_post_flood='.$post_flood.', g_search_flood='.$search_flood.', g_email_flood='.$email_flood.', g_report_flood='.$report_flood.' WHERE g_id='.intval($_POST['group_id'])) or error('Unable to update group', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 20. REPLACE WITH ]-----------------------------------------------------------------
+#---------[ 22. REPLACE WITH ]-----------------------------------------------------------------
 #
 
 		$db->query('UPDATE '.$db->prefix.'groups SET g_title=\''.$db->escape($title).'\', g_user_title='.$user_title.', g_promote_min_posts='.$promote_min_posts.', g_promote_next_group='.$promote_next_group.', g_moderator='.$moderator.', g_mod_edit_users='.$mod_edit_users.', g_mod_rename_users='.$mod_rename_users.', g_mod_change_passwords='.$mod_change_passwords.', g_mod_ban_users='.$mod_ban_users.', g_read_board='.$read_board.', g_view_users='.$view_users.', g_post_replies='.$post_replies.', g_post_topics='.$post_topics.', g_edit_posts='.$edit_posts.', g_delete_posts='.$delete_posts.', g_delete_topics='.$delete_topics.', g_post_links='.$post_links.', g_set_title='.$set_title.', g_search='.$search.', g_search_users='.$search_users.', g_send_email='.$send_email.', g_post_flood='.$post_flood.', g_search_flood='.$search_flood.', g_email_flood='.$email_flood.', g_report_flood='.$report_flood.', g_color=\''.$db->escape($group_color).'\' WHERE g_id='.intval($_POST['group_id'])) or error('Unable to update group', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 21. FIND ]-------------------------------------------------------
+#---------[ 23. FIND ]-------------------------------------------------------
 #
 
 	}
@@ -184,50 +195,50 @@ admin_groups.php
 		require PUN_ROOT.'include/cache.php';
 
 #
-#---------[ 22. AFTER, ADD ]-----------------------------------------------------------------
+#---------[ 24. AFTER, ADD ]-----------------------------------------------------------------
 #
 
 	generate_colorize_groups_cache();
 
 
 #
-#---------[ 23. OPEN ]---------------------------------------------------------
+#---------[ 25. OPEN ]---------------------------------------------------------
 #
 
 include/cache.php
 
 #
-#---------[ 24. FIND ]---------------------------------------------
+#---------[ 26. FIND ]---------------------------------------------
 #
 
 	$result = $db->query('SELECT id, username FROM '.$db->prefix.'users WHERE group_id!='.PUN_UNVERIFIED.' ORDER BY registered DESC LIMIT 1') or error('Unable to fetch newest registered user', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 25. REPLACE WITH ]-------------------------------------------------
+#---------[ 27. REPLACE WITH ]-------------------------------------------------
 #
 
 	$result = $db->query('SELECT id, username, group_id FROM '.$db->prefix.'users WHERE group_id!='.PUN_UNVERIFIED.' ORDER BY registered DESC LIMIT 1') or error('Unable to fetch newest registered user', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 26. OPEN ]---------------------------------------------------------
+#---------[ 28. OPEN ]---------------------------------------------------------
 #
 
 index.php
 
 #
-#---------[ 27. FIND (If you have subforum or last topic on index mod installed, this query may be different so you need to manually modify it :) ) ]---------------------------------------------
+#---------[ 29. FIND (If you have subforum or last topic on index mod installed, this query may be different so you need to manually modify it :) ) ]---------------------------------------------
 #
 
 $result = $db->query('SELECT c.id AS cid, c.cat_name, f.id AS fid, f.forum_name, f.forum_desc, f.redirect_url, f.moderators, f.num_topics, f.num_posts, f.last_post, f.last_post_id, f.last_poster FROM '.$db->prefix.'categories AS c INNER JOIN '.$db->prefix.'forums AS f ON c.id=f.cat_id LEFT JOIN '.$db->prefix.'forum_perms AS fp ON (fp.forum_id=f.id AND fp.group_id='.$pun_user['g_id'].') WHERE fp.read_forum IS NULL OR fp.read_forum=1 ORDER BY c.disp_position, c.id, f.disp_position', true) or error('Unable to fetch category/forum list', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 28. REPLACE WITH (Add "u.group_id, u.id AS uid, " (without quotes) after "SELECT" and "LEFT JOIN '.$db->prefix.'users AS u ON (f.last_poster=u.username) " before "WHERE" ) ]-------------------------------------------------
+#---------[ 30. REPLACE WITH (Add "u.group_id, u.id AS uid, " (without quotes) after "SELECT" and "LEFT JOIN '.$db->prefix.'users AS u ON (f.last_poster=u.username) " before "WHERE" ) ]-------------------------------------------------
 #
 
 $result = $db->query('SELECT u.group_id, u.id AS uid, c.id AS cid, c.cat_name, f.id AS fid, f.forum_name, f.forum_desc, f.redirect_url, f.moderators, f.num_topics, f.num_posts, f.last_post, f.last_post_id, f.last_poster FROM '.$db->prefix.'categories AS c INNER JOIN '.$db->prefix.'forums AS f ON c.id=f.cat_id LEFT JOIN '.$db->prefix.'forum_perms AS fp ON (fp.forum_id=f.id AND fp.group_id='.$pun_user['g_id'].') LEFT JOIN '.$db->prefix.'users AS u ON (f.last_poster=u.username) WHERE fp.read_forum IS NULL OR fp.read_forum=1 ORDER BY c.disp_position, c.id, f.disp_position', true) or error('Unable to fetch category/forum list', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 29. FIND ]---------------------------------------------
+#---------[ 31. FIND ]---------------------------------------------
 #
 
 	if ($cur_forum['moderators'] != '')
@@ -247,7 +258,7 @@ $result = $db->query('SELECT u.group_id, u.id AS uid, c.id AS cid, c.cat_name, f
 	}
 
 #
-#---------[ 30. REPLACE WITH ]-------------------------------------------------
+#---------[ 32. REPLACE WITH ]-------------------------------------------------
 #
 
 	if ($cur_forum['last_post'] != '')
@@ -289,51 +300,51 @@ $result = $db->query('SELECT u.group_id, u.id AS uid, c.id AS cid, c.cat_name, f
 	}
 
 #
-#---------[ 31. FIND ]---------------------------------------------
+#---------[ 33. FIND ]---------------------------------------------
 #
 
 	$stats['newest_user'] = pun_htmlspecialchars($stats['last_user']['username']);
 
 #
-#---------[ 32. AFTER, ADD ]-------------------------------------------------
+#---------[ 34. AFTER, ADD ]-------------------------------------------------
 #
 
 $stats['newest_user'] = colorize_group($stats['last_user']['username'], $stats['last_user']['group_id'], $stats['last_user']['id']);
 
 #
-#---------[ 33. FIND ]---------------------------------------------
+#---------[ 35. FIND ]---------------------------------------------
 #
 
 	$result = $db->query('SELECT user_id, ident FROM '.$db->prefix.'online WHERE idle=0 ORDER BY ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 34. REPLACE WITH ]-------------------------------------------------
+#---------[ 36. REPLACE WITH ]-------------------------------------------------
 #
 
 	$result = $db->query('SELECT user_id, ident, u.group_id FROM '.$db->prefix.'online LEFT JOIN '.$db->prefix.'users AS u ON (ident=u.username) WHERE idle=0 ORDER BY ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 35. FIND ]---------------------------------------------
+#---------[ 37. FIND ]---------------------------------------------
 #
 
 			else
 				$users[] = "\n\t\t\t\t".'<dd>'.pun_htmlspecialchars($pun_user_online['ident']);
 
 #
-#---------[ 36. AFTER, ADD ]-------------------------------------------------
+#---------[ 38. AFTER, ADD ]-------------------------------------------------
 #
 
 			$users[count($users) - 1] = str_replace('">'.pun_htmlspecialchars($pun_user_online['ident']).'</a>', '">'.colorize_group($pun_user_online['ident'], $pun_user_online['group_id']).'</a>', $users[count($users) - 1]);
 
 #
-#---------[ 37. FIND ]---------------------------------------------
+#---------[ 39. FIND ]---------------------------------------------
 #
 
 	else
 		echo "\t\t\t".'<div class="clearer"></div>'."\n";
 
 #
-#---------[ 38. AFTER, ADD ]-------------------------------------------------
+#---------[ 40. AFTER, ADD ]-------------------------------------------------
 #
 
 	$groups = array();
@@ -353,19 +364,19 @@ $stats['newest_user'] = colorize_group($stats['last_user']['username'], $stats['
 		echo "\t\t\t".'<dl id="onlinelist" class="clearb">'."\n\t\t\t\t".'<dt><strong>'.$lang_colorize_groups['Legend'].': </strong></dt>'.implode(', ', $groups)."\n\t\t\t".'</dl>'."\n";
 
 #
-#---------[ 38. OPEN ]---------------------------------------------------------
+#---------[ 41. OPEN ]---------------------------------------------------------
 #
 
 viewforum.php
 
 #
-#---------[ 39. FIND ]---------------------------------------------
+#---------[ 42. FIND ]---------------------------------------------
 #
 
 	$result = $db->query($sql) or error('Unable to fetch topic list', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 40. BEFORE, ADD ]-------------------------------------------------
+#---------[ 43. BEFORE, ADD ]-------------------------------------------------
 #
 
 	if ($pun_user['is_guest'] || $pun_config['o_show_dot'] == '0')
@@ -377,14 +388,14 @@ viewforum.php
 	}
 
 #
-#---------[ 41. FIND ]---------------------------------------------
+#---------[ 44. FIND ]---------------------------------------------
 #
 
 		// Insert the status text before the subject
 		$subject = implode(' ', $status_text).' '.$subject;
 
 #
-#---------[ 42. BEFORE, ADD ]-------------------------------------------------
+#---------[ 45. BEFORE, ADD ]-------------------------------------------------
 #
 
 		if (isset($cur_topic['up_group_id'])) // user
@@ -405,20 +416,20 @@ viewforum.php
 		}
 
 #
-#---------[ 43. OPEN ]---------------------------------------------------------
+#---------[ 46. OPEN ]---------------------------------------------------------
 #
 
 viewtopic.php
 
 #
-#---------[ 44. FIND ]---------------------------------------------
+#---------[ 47. FIND ]---------------------------------------------
 #
 
 	// Perform the main parsing of the message (BBCode, smilies, censor words etc)
 	$cur_post['message'] = parse_message($cur_post['message'], $cur_post['hide_smilies']);
 
 #
-#---------[ 45. BEFORE, ADD ]-------------------------------------------------
+#---------[ 48. BEFORE, ADD ]-------------------------------------------------
 #
 
 	if ($cur_post['poster_id'] > 1 && $pun_user['g_view_users'] == '1')
@@ -426,32 +437,32 @@ viewtopic.php
 	else
 		$username = colorize_group($cur_post['username'], $cur_post['g_id']);
 #
-#---------[ 46. OPEN ]---------------------------------------------------------
+#---------[ 49. OPEN ]---------------------------------------------------------
 #
 
 moderate.php
 
 #
-#---------[ 47. FIND ]---------------------------------------------
+#---------[ 50. FIND ]---------------------------------------------
 #
 
 	$result = $db->query('SELECT id, poster, subject, posted, last_post, last_post_id, last_poster, num_views, num_replies, closed, sticky, moved_to FROM '.$db->prefix.'topics WHERE id IN('.implode(',', $topic_ids).') ORDER BY sticky DESC, '.$sort_by.', id DESC') or error('Unable to fetch topic list for forum', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 48. REPLACE WITH ]-------------------------------------------------
+#---------[ 51. REPLACE WITH ]-------------------------------------------------
 #
 
 	$result = $db->query('SELECT u.id AS uid, u.group_id, up.id AS up_id, up.group_id AS up_group_id, t.id, t.poster, t.subject, t.posted, t.last_post, t.last_post_id, t.last_poster, t.num_views, t.num_replies, t.closed, t.sticky, t.moved_to FROM '.$db->prefix.'topics AS t LEFT JOIN '.$db->prefix.'users AS u ON (t.last_poster=u.username) LEFT JOIN '.$db->prefix.'users AS up ON (t.poster=up.username) WHERE t.id IN ('.implode(',', $topic_ids).')'.' ORDER BY t.sticky DESC, t.'.$sort_by.', t.id DESC') or error('Unable to fetch topic list for forum', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 49. FIND ]---------------------------------------------
+#---------[ 52. FIND ]---------------------------------------------
 #
 
 		// Insert the status text before the subject
 		$subject = implode(' ', $status_text).' '.$subject;
 
 #
-#---------[ 50. BEFORE, ADD ]-------------------------------------------------
+#---------[ 53. BEFORE, ADD ]-------------------------------------------------
 #
 
 		if (isset($cur_topic['up_group_id'])) // user
@@ -473,51 +484,51 @@ moderate.php
 
 
 #
-#---------[ 51. OPEN ]---------------------------------------------------------
+#---------[ 54. OPEN ]---------------------------------------------------------
 #
 
 userlist.php
 
 #
-#---------[ 52. FIND ]---------------------------------------------
+#---------[ 55. FIND ]---------------------------------------------
 #
 
 					<td class="tcl"><?php echo '<a href="profile.php?id='.$user_data['id'].'">'.pun_htmlspecialchars($user_data['username']).'</a>' ?></td>
 
 
 #
-#---------[ 53. REPLACE WITH ]-------------------------------------------------
+#---------[ 56. REPLACE WITH ]-------------------------------------------------
 #
 
 					<td class="tcl"><?php echo '<a href="profile.php?id='.$user_data['id'].'">'.colorize_group($user_data['username'], $user_data['g_id']).'</a>' ?></td>
 
 #
-#---------[ 54. OPEN ]---------------------------------------------------------
+#---------[ 57. OPEN ]---------------------------------------------------------
 #
 
 profile.php
 
 #
-#---------[ 55. FIND ]---------------------------------------------
+#---------[ 58. FIND ]---------------------------------------------
 #
 
 	$user_personal[] = '<dd>'.pun_htmlspecialchars($user['username']).'</dd>';
 
 #
-#---------[ 56. REPLACE WITH ]-------------------------------------------------
+#---------[ 59. REPLACE WITH ]-------------------------------------------------
 #
 
 	$user_personal[] = '<dd>'.colorize_group($user['username'], $user['g_id']).'</dd>';
 
 #
-#---------[ 58. FIND ]---------------------------------------------
+#---------[ 60. FIND ]---------------------------------------------
 #
 
 				$username = array_search($id, $cur_moderators);
 				unset($cur_moderators[$username]);
 
 #
-#---------[ 59. AFTER, ADD ]-------------------------------------------------
+#---------[ 61. AFTER, ADD ]-------------------------------------------------
 #
 
 				unset($cur_moderators['groups'][$id]);
@@ -525,7 +536,7 @@ profile.php
 					unset($cur_moderators['groups']);
 
 #
-#---------[ 58. FIND ]---------------------------------------------
+#---------[ 62. FIND ]---------------------------------------------
 #
 
 	}
@@ -533,7 +544,7 @@ profile.php
 	redirect('profile.php?section=admin&amp;id='.$id, $lang_profile['Group membership redirect']);
 
 #
-#---------[ 59. BEFORE, ADD ]-------------------------------------------------
+#---------[ 63. BEFORE, ADD ]-------------------------------------------------
 #
 	}
 
@@ -554,7 +565,7 @@ profile.php
 		}
 
 #
-#---------[ 58. FIND ]---------------------------------------------
+#---------[ 64. FIND ]---------------------------------------------
 #
 
 	// Get the username of the user we are processing
@@ -562,7 +573,7 @@ profile.php
 	$username = $db->result($result);
 
 #
-#---------[ 58. REPLACE WITH ]---------------------------------------------
+#---------[ 65. REPLACE WITH ]---------------------------------------------
 #
 
 	// Get the username of the user we are processing
@@ -570,14 +581,14 @@ profile.php
 	list($username, $group_id) = $db->fetch_row($result);
 
 #
-#---------[ 58. FIND ]---------------------------------------------
+#---------[ 66. FIND ]---------------------------------------------
 #
 
 		// If the user should have moderator access (and he/she doesn't already have it)
 		if (in_array($cur_forum['id'], $moderator_in) && !in_array($id, $cur_moderators))
 
 #
-#---------[ 59. BEFORE, ADD ]-------------------------------------------------
+#---------[ 67. BEFORE, ADD ]-------------------------------------------------
 #
 
 		if (in_array($cur_forum['id'], $moderator_in) || in_array($id, $cur_moderators))
@@ -588,7 +599,7 @@ profile.php
 		}
 
 #
-#---------[ 58. FIND ]---------------------------------------------
+#---------[ 68. FIND ]---------------------------------------------
 #
 
 		else if (!in_array($cur_forum['id'], $moderator_in) && in_array($id, $cur_moderators))
@@ -596,7 +607,7 @@ profile.php
 			unset($cur_moderators[$username]);
 
 #
-#---------[ 58. AFTER, ADD ]---------------------------------------------
+#---------[ 69. AFTER, ADD ]---------------------------------------------
 #
 
 			unset($cur_moderators['groups'][$id]);
@@ -604,7 +615,7 @@ profile.php
 					unset($cur_moderators['groups']);
 
 #
-#---------[ 58. FIND ]---------------------------------------------
+#---------[ 70. FIND ]---------------------------------------------
 #
 
 	}
@@ -612,51 +623,51 @@ profile.php
 	redirect('profile.php?section=admin&amp;id='.$id, $lang_profile['Update forums redirect']);
 
 #
-#---------[ 59. BEFORE, ADD ]-------------------------------------------------
+#---------[ 71. BEFORE, ADD ]-------------------------------------------------
 #
 
 		elseif (in_array($cur_forum['id'], $moderator_in) || in_array($id, $cur_moderators))
 			$db->query('UPDATE '.$db->prefix.'forums SET moderators=\''.$db->escape(serialize($cur_moderators)).'\' WHERE id='.$cur_forum['id']) or error('Unable to update forum', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 57. OPEN ]---------------------------------------------------------
+#---------[ 72. OPEN ]---------------------------------------------------------
 #
 
 post.php
 
 #
-#---------[ 58. FIND ]---------------------------------------------
+#---------[ 73. FIND ]---------------------------------------------
 #
 
 	$result = $db->query('SELECT poster, message, hide_smilies, posted FROM '.$db->prefix.'posts WHERE topic_id='.$tid.' ORDER BY id DESC LIMIT '.$pun_config['o_topic_review']) or error('Unable to fetch topic review', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 59. REPLACE WITH ]-------------------------------------------------
+#---------[ 74. REPLACE WITH ]-------------------------------------------------
 #
 
 	$result = $db->query('SELECT p.poster, p.message, p.hide_smilies, p.posted, u.group_id FROM '.$db->prefix.'posts AS p LEFT JOIN '.$db->prefix.'users AS u ON (p.poster=u.username) WHERE p.topic_id='.$tid.' ORDER BY p.id DESC LIMIT '.$pun_config['o_topic_review']) or error('Unable to fetch topic review', __FILE__, __LINE__, $db->error());
 
 
 #
-#---------[ 60. FIND ]---------------------------------------------
+#---------[ 75. FIND ]---------------------------------------------
 #
 
 							<dt><strong><?php echo pun_htmlspecialchars($cur_post['poster']) ?></strong></dt>
 
 #
-#---------[ 61. REPLACE WITH ]-------------------------------------------------
+#---------[ 76. REPLACE WITH ]-------------------------------------------------
 #
 
 							<dt><strong><?php echo colorize_group($cur_post['poster'], $cur_post['group_id']) ?></strong></dt>
 
 #
-#---------[ 62. OPEN ]---------------------------------------------------------
+#---------[ 77. OPEN ]---------------------------------------------------------
 #
 
 search.php
 
 #
-#---------[ 63. FIND ]---------------------------------------------
+#---------[ 78. FIND ]---------------------------------------------
 #
 
 		if ($show_as == 'posts')
@@ -665,7 +676,7 @@ search.php
 			$result = $db->query('SELECT t.id AS tid, t.poster, t.subject, t.last_post, t.last_post_id, t.last_poster, t.num_replies, t.closed, t.sticky, t.forum_id, f.forum_name FROM '.$db->prefix.'topics AS t INNER JOIN '.$db->prefix.'forums AS f ON f.id=t.forum_id WHERE t.id IN('.implode(',', $search_ids).') ORDER BY '.$sort_by_sql.' '.$sort_dir) or error('Unable to fetch search results', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 64. REPLACE WITH ]-------------------------------------------------
+#---------[ 79. REPLACE WITH ]-------------------------------------------------
 #
 
 		if ($show_as == 'posts')
@@ -674,25 +685,25 @@ search.php
 			$result = $db->query('SELECT u.id AS uid, u.group_id, up.id AS up_id, up.group_id AS up_group_id, t.id AS tid, t.poster, t.subject, t.last_post, t.last_post_id, t.last_poster, t.num_replies, t.closed, t.sticky, t.forum_id, f.forum_name FROM '.$db->prefix.'topics AS t INNER JOIN '.$db->prefix.'forums AS f ON f.id=t.forum_id LEFT JOIN '.$db->prefix.'users AS u ON (t.last_poster=u.username) LEFT JOIN '.$db->prefix.'users AS up ON (t.poster=up.username) WHERE t.id IN('.implode(',', $search_ids).') ORDER BY '.$sort_by_sql.' '.$sort_dir) or error('Unable to fetch search results', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 65. FIND ]---------------------------------------------
+#---------[ 80. FIND ]---------------------------------------------
 #
 
 				$pposter = pun_htmlspecialchars($cur_search['pposter']);
 
 #
-#---------[ 66. REPLACE WITH ]-------------------------------------------------
+#---------[ 81. REPLACE WITH ]-------------------------------------------------
 #
 
 				$pposter = colorize_group($cur_search['pposter'], $cur_search['group_id']);
 
 #
-#---------[ 67. FIND ]---------------------------------------------
+#---------[ 82. FIND ]---------------------------------------------
 #
 				// Insert the status text before the subject
 				$subject = implode(' ', $status_text).' '.$subject;
 
 #
-#---------[ 68. BEFORE, ADD ]-------------------------------------------------
+#---------[ 83. BEFORE, ADD ]-------------------------------------------------
 #
 
 				if (isset($cur_search['up_group_id'])) // user
@@ -703,30 +714,30 @@ search.php
 				$subject = str_replace('<span class="byuser">'.$lang_common['by'].' '.pun_htmlspecialchars($cur_search['poster']).'</span>', '<span class="byuser">'.$lang_common['by'].' '.$col_group.'</span>', $subject);
 
 #
-#---------[ 69. FIND ]---------------------------------------------
+#---------[ 84. FIND ]---------------------------------------------
 #
 
 					<td class="tcr"><?php echo '<a href="viewtopic.php?pid='.$cur_search['last_post_id'].'#p'.$cur_search['last_post_id'].'">'.format_time($cur_search['last_post']).'</a> <span class="byuser">'.$lang_common['by'].' '.pun_htmlspecialchars($cur_search['last_poster']) ?></span></td>
 
 
 #
-#---------[ 70. REPLACE WITH ]-------------------------------------------------
+#---------[ 85. REPLACE WITH ]-------------------------------------------------
 #
 
 					<td class="tcr"><?php echo '<a href="viewtopic.php?pid='.$cur_search['last_post_id'].'#p'.$cur_search['last_post_id'].'">'.format_time($cur_search['last_post']).'</a> <span class="byuser">'.$lang_common['by'].' '.(isset($cur_search['group_id']) ? colorize_group($cur_search['last_poster'], $cur_search['group_id'], $cur_search['uid']) : colorize_group($cur_search['last_poster'], PUN_GUEST)) ?></span></td>
 #
-#---------[ 71. DELETE (if exist) ]-------------------------------------------------
+#---------[ 86. DELETE (if exist) ]-------------------------------------------------
 #
 
 cache/cache_users_info.php
 
 #
-#---------[ 71. INFORMATION ]-------------------------------------------------
+#---------[ 87. INFORMATION ]-------------------------------------------------
 #
 
 If you have subforum mod installed, follow also steps from readme_sub_forum.txt
 If you have online today mod installed, follow also steps from readme_online_today.txt
 
 #
-#---------[ 72. SAVE/UPLOAD ]-------------------------------------------------
+#---------[ 88. SAVE/UPLOAD ]-------------------------------------------------
 #
